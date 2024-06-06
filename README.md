@@ -16,4 +16,3 @@ This starter template is inspired by the [react-firebase-template](https://githu
 
 ### TODO
 1. Theme customization
-2. User roles
