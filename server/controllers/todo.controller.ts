@@ -2,7 +2,6 @@ import { TodoModelSchema, TodoModelName } from "@server/models/todo.model";
 import todoService from "@server/services/todo.service";
 import { ResponseI } from "@server/types/ResponseI";
 import { ResponseStatusEnum } from "@server/types/enums/ResponseStatusEnum";
-// TODO: Define elsewhere (confusing that we're defining it in src then calling it here)
 import { Todo } from "@src/types/Todo";
 import { collection, addDoc, Firestore, getFirestore, Timestamp } from "firebase/firestore";
 import { z } from "zod";
