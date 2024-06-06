@@ -30,7 +30,7 @@ const HomePage = () => {
 
       if (res.status === ResponseStatusEnum.SUCCESS) {
         const newItem = res.body as Todo;
-        todoStore.setTodoItems([...todoStore.todoItems, newItem]);
+        todoStore.setTodoItems([newItem, ...todoStore.todoItems]);
       }
     }
   };

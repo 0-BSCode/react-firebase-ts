@@ -1,3 +1,4 @@
+// TODO: Deal with 'any' type errors
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TodoModelSchema, TodoModelName } from "@server/models/todo.model";
 import todoService from "@server/services/todo.service";
@@ -5,7 +6,7 @@ import { ResponseI } from "@server/types/ResponseI";
 import { ResponseStatusEnum } from "@server/types/enums/ResponseStatusEnum";
 // TODO: Define elsewhere (confusing that we're defining it in src then calling it here)
 import { Todo } from "@src/types/Todo";
-import { collection, addDoc, Firestore, getFirestore } from "firebase/firestore";
+import { collection, addDoc, Firestore, getFirestore, Timestamp } from "firebase/firestore";
 import { z } from "zod";
 
 // Input validation, sanitization, and role validation
@@ -21,15 +22,18 @@ class TodoController {
       const items = await todoService.getItems();
       const filteredItems = items.docs.filter((item) => item.data().ownerId === userId);
       const todoItems = filteredItems.map((item) => {
+        const itemData = item.data() as TodoModelSchema;
         return {
           id: item.id,
-          ...item.data()
+          ...itemData,
+          createdAt: itemData.createdAt.toDate(),
+          updatedAt: itemData.createdAt.toDate()
         } as Todo;
       });
 
       return {
         status: ResponseStatusEnum.SUCCESS,
-        body: todoItems
+        body: todoItems.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       } as ResponseI<Todo[]>;
     } catch (err: any) {
       return {
@@ -52,19 +56,26 @@ class TodoController {
         title,
         description,
         ownerId: userId,
-        completed: false
+        completed: false,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
       };
       const itemRef = await addDoc(collection(this.firestore, TodoModelName), newTodo);
       const item = await todoService.getItem(itemRef.id);
+      const itemData = item.data() as TodoModelSchema;
+      if (!itemData) {
+        throw new Error("Error creating todo item");
+      }
 
       return {
         status: ResponseStatusEnum.SUCCESS,
         body: {
           id: itemRef.id,
-          ...item.data()
+          ...itemData,
+          createdAt: itemData.createdAt.toDate(),
+          updatedAt: itemData.updatedAt.toDate()
         }
       } as ResponseI<Todo>;
-      // TODO: Deal with errors
     } catch (err: any) {
       return {
         status: ResponseStatusEnum.ERROR,
@@ -88,7 +99,9 @@ class TodoController {
         completed: newStatus,
         description: itemData.description,
         title: itemData.title,
-        ownerId: itemData.ownerId
+        ownerId: itemData.ownerId,
+        updatedAt: Timestamp.now(),
+        createdAt: itemData.createdAt
       };
 
       await todoService.updateItem(id, updatedItem);
