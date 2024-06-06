@@ -1,5 +1,3 @@
-// TODO: Deal with 'any' type errors
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TodoModelSchema, TodoModelName } from "@server/models/todo.model";
 import todoService from "@server/services/todo.service";
 import { ResponseI } from "@server/types/ResponseI";
@@ -16,7 +14,6 @@ class TodoController {
     this.firestore = getFirestore();
   }
 
-  // TODO: Ensure current user can access only their stuff
   public getByUserId = async (userId: string) => {
     try {
       const items = await todoService.getItems();
@@ -35,7 +32,7 @@ class TodoController {
         status: ResponseStatusEnum.SUCCESS,
         body: todoItems.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       } as ResponseI<Todo[]>;
-    } catch (err: any) {
+    } catch (err: unknown) {
       return {
         status: ResponseStatusEnum.ERROR,
         body: err
@@ -76,7 +73,7 @@ class TodoController {
           updatedAt: itemData.updatedAt.toDate()
         }
       } as ResponseI<Todo>;
-    } catch (err: any) {
+    } catch (err: unknown) {
       return {
         status: ResponseStatusEnum.ERROR,
         body: err
@@ -109,7 +106,7 @@ class TodoController {
         status: ResponseStatusEnum.SUCCESS,
         body: id
       } as ResponseI<string>;
-    } catch (err: any) {
+    } catch (err: unknown) {
       return {
         status: ResponseStatusEnum.ERROR,
         body: err
@@ -128,7 +125,7 @@ class TodoController {
         status: ResponseStatusEnum.SUCCESS,
         body: id
       } as ResponseI<string>;
-    } catch (err: any) {
+    } catch (err: unknown) {
       return {
         status: ResponseStatusEnum.ERROR,
         body: err

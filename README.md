@@ -15,6 +15,6 @@ A starter template for React and Firebase in Typescript
 This starter template is inspired by the [react-firebase-template](https://github.com/eddedd88/react-firebase-template) by eddedd88.
 
 ### TODO
-1. Set up CRUD operations with TodoModel (FE and BE)
-2. Handle error responses from services and controllers
-3. Theme customization
+1. Handle error responses from services and controllers
+2. Theme customization
+3. User roles

@@ -5,6 +5,7 @@ import TodoItem from "@src/components/molecules/TodoItem";
 import useAuthStore from "@src/stores/auth.store";
 import useTodoStore from "@src/stores/todo.store";
 import { Todo } from "@src/types/Todo";
+import { User } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -12,6 +13,8 @@ const HomePage = () => {
   const navigate = useNavigate();
   const authStore = useAuthStore();
   const todoStore = useTodoStore();
+  const user = authStore.user as User;
+
   const [todo, setTodo] = useState({
     title: "",
     description: ""
@@ -25,13 +28,11 @@ const HomePage = () => {
   };
 
   const handleCreate = async () => {
-    if (authStore.user) {
-      const res = await todoController.create(todo.title, todo.description, authStore.user?.uid);
+    const res = await todoController.create(todo.title, todo.description, user.uid);
 
-      if (res.status === ResponseStatusEnum.SUCCESS) {
-        const newItem = res.body as Todo;
-        todoStore.setTodoItems([newItem, ...todoStore.todoItems]);
-      }
+    if (res.status === ResponseStatusEnum.SUCCESS) {
+      const newItem = res.body as Todo;
+      todoStore.setTodoItems([newItem, ...todoStore.todoItems]);
     }
   };
 

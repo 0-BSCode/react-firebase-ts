@@ -5,37 +5,33 @@ import useAuthStore from "@src/stores/auth.store";
 import todoController from "@server/controllers/todo.controller";
 import useTodoStore from "@src/stores/todo.store";
 import { ResponseStatusEnum } from "@server/types/enums/ResponseStatusEnum";
+import { User } from "firebase/auth";
 
-// TODO: Rename type (don't like that schema is used here)
 const TodoItem = ({ todo }: { todo: Todo }) => {
   const authStore = useAuthStore();
   const todoStore = useTodoStore();
+  const user = authStore.user as User;
   const handleDelete = async (id: string) => {
-    // TODO: Cleaner way of checking if user is logged in
-    if (authStore.user) {
-      const res = await todoController.deleteOne(id, authStore.user.uid);
-      if (res.status === ResponseStatusEnum.SUCCESS) {
-        const items = todoStore.todoItems.filter((item) => item.id !== id);
-        todoStore.setTodoItems(items);
-      }
+    const res = await todoController.deleteOne(id, user.uid);
+    if (res.status === ResponseStatusEnum.SUCCESS) {
+      const items = todoStore.todoItems.filter((item) => item.id !== id);
+      todoStore.setTodoItems(items);
     }
   };
 
   const handleStatusUpdate = async (id: string, newStatus: boolean) => {
-    if (authStore.user) {
-      const res = await todoController.updateOneStatus(id, newStatus, authStore.user.uid);
-      if (res.status === ResponseStatusEnum.SUCCESS) {
-        const items = todoStore.todoItems.map((item) => {
-          if (item.id === id) {
-            return {
-              ...item,
-              completed: newStatus
-            };
-          }
-          return item;
-        });
-        todoStore.setTodoItems(items);
-      }
+    const res = await todoController.updateOneStatus(id, newStatus, user.uid);
+    if (res.status === ResponseStatusEnum.SUCCESS) {
+      const items = todoStore.todoItems.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            completed: newStatus
+          };
+        }
+        return item;
+      });
+      todoStore.setTodoItems(items);
     }
   };
 
