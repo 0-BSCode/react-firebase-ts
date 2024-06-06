@@ -18,5 +18,4 @@ This starter template is inspired by the [react-firebase-template](https://githu
 1. Set up CRUD operations with TodoModel (FE and BE)
 2. Set up Tailwind + UI Library
 3. Set up prettier, husky, and lint-staged for pre-commit formatting
-4. Set up auth flow sample (include protected routes)
-5. Handle error responses from services and controllers
+4. Handle error responses from services and controllers
