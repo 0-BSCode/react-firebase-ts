@@ -56,6 +56,14 @@ class Backend {
     this.app = initializeApp(firebaseConfig)
     this.db = getFirestore(this.app)
     this.auth = getAuth(this.app)
+
+    this.auth.onAuthStateChanged((user) => {
+      if (user) {
+        return user
+      } else {
+        return null
+      }
+    })
   }
 
   public ok() {

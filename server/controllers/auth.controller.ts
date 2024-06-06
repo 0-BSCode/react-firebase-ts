@@ -9,6 +9,11 @@ class AuthController {
         this.auth = auth
     }
 
+    getCurrentUser() {
+        console.log(`Current user: ${this.auth.currentUser}`)
+        return this.auth.currentUser
+    }
+
     signInWithEmailAndPassword = async (email: string, password: string) => {
         try {
           const result = await signInWithEmailAndPassword(this.auth, email, password);
@@ -52,6 +57,7 @@ class AuthController {
 
     signOut = async () => {
         try {
+          console.log("Sign off")
           await FirebaseSignOut(this.auth);
           return {
             status: ResponseStatusEnum.SUCCESS,

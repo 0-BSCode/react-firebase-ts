@@ -1,27 +1,17 @@
-import { useState } from 'react'
 import './App.css'
-import authController from '@server/controllers/auth.controller'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import HomePage from './pages/Home'
+import ProtectedRoute from './components/molecules/ProtectedRoute'
+import LoginPage from './pages/Login'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-    <button onClick={() => authController.signInWithGoogle()}>Sign in with Google</button>
-      
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Router>
+      <Routes>
+        <Route path='/' element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+        <Route path='/login' element={<LoginPage />} />
+      </Routes>
+    </Router>
   )
 }
 
