@@ -15,5 +15,5 @@ A starter template for React and Firebase in Typescript
 This starter template is inspired by the [react-firebase-template](https://github.com/eddedd88/react-firebase-template) by eddedd88.
 
 ### TODO
-2. Theme customization
-3. User roles
+1. Theme customization
+2. User roles
