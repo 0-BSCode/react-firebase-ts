@@ -16,5 +16,4 @@ This starter template is inspired by the [react-firebase-template](https://githu
 
 ### TODO
 1. Set up CRUD operations with TodoModel (FE and BE)
-2. Set up Tailwind + UI Library
-3. Handle error responses from services and controllers
+2. Handle error responses from services and controllers
