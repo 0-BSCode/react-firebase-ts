@@ -2,7 +2,7 @@ import { ResponseI } from "@server/types/ResponseI";
 import { ResponseStatusEnum } from "@server/types/enums/ResponseStatusEnum";
 import {
   Auth,
-  User,
+  User as FirebaseUser,
   signInWithPopup,
   GoogleAuthProvider,
   signOut as FirebaseSignOut,
@@ -10,6 +10,10 @@ import {
   createUserWithEmailAndPassword
 } from "firebase/auth";
 import backend from "@server/index";
+import { UserRolesEnum } from "@server/types/enums/UserRolesEnum";
+import { UserModelSchema } from "@server/models/user.model";
+import { Timestamp } from "firebase/firestore";
+import userService from "@server/services/user.service";
 
 class AuthController {
   private auth: Auth;
@@ -24,12 +28,22 @@ class AuthController {
         body: "Passwords do not match"
       } as ResponseI<string>;
     }
+
     try {
       const result = await createUserWithEmailAndPassword(this.auth, email, password);
+      const userInfo: UserModelSchema = {
+        uid: result.user.uid,
+        email: result.user.email as string,
+        roles: [UserRolesEnum.USER],
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
+      };
+
+      await userService.addItem(userInfo);
       return {
         status: ResponseStatusEnum.SUCCESS,
         body: result.user
-      } as ResponseI<User>;
+      } as ResponseI<FirebaseUser>;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const errorMessage = err.message as string;
@@ -46,7 +60,7 @@ class AuthController {
       return {
         status: ResponseStatusEnum.SUCCESS,
         body: result.user
-      } as ResponseI<User>;
+      } as ResponseI<FirebaseUser>;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const errorMessage = err.message as string;
@@ -63,11 +77,24 @@ class AuthController {
       // Sign in with a pop-up window
       const result = await signInWithPopup(this.auth, provider);
 
-      // Pull signed-in user credential.
+      const userInfo: UserModelSchema = {
+        uid: result.user.uid,
+        email: result.user.email as string,
+        roles: [UserRolesEnum.USER],
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
+      };
+
+      const user = await userService.getItem(userInfo.uid);
+
+      if (!user.data()) {
+        await userService.addItem(userInfo);
+      }
+
       return {
         status: ResponseStatusEnum.SUCCESS,
         body: result.user
-      } as ResponseI<User>;
+      } as ResponseI<FirebaseUser>;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       // Handle errors here.
@@ -96,6 +123,10 @@ class AuthController {
         body: errorMessage
       } as ResponseI<string>;
     }
+  };
+
+  public isAuthorized = (userRoles: UserRolesEnum[], authorizedRoles: UserRolesEnum[]) => {
+    return userRoles.every((role) => authorizedRoles.includes(role));
   };
 }
 

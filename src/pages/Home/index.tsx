@@ -27,6 +27,7 @@ const HomePage = () => {
     }
   };
 
+  console.log(user);
   const handleCreate = async () => {
     const res = await todoController.create(todo.title, todo.description, user.uid);
 
