@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
     "format": "prettier --ignore-path .gitignore --write \"src/**/*.+(js|ts|json|html|css)\" \"server/**/*.+(js|ts|json)\"",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "husky"
   },
   "dependencies": {
     "firebase": "^10.12.2",
@@ -28,8 +29,23 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
     "eslint-plugin-unused-imports": "^3.2.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.5",
     "prettier": "^3.3.1",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "server/**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "src/**/*.{html,css}": [
+      "prettier --write"
+    ]
   }
 }
