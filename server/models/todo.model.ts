@@ -1,6 +1,7 @@
 export const TodoModelName = 'todo';
-export type TodoModel = {
+export type TodoModelSchema = {
     id: string
+    title: string;
     description: string
     completed: boolean
 }
