@@ -1,6 +1,6 @@
 import { ResponseI } from "@server/types/ResponseI";
 import { ResponseStatusEnum } from "@server/types/enums/ResponseStatusEnum";
-import { Auth, User, signInWithPopup, GoogleAuthProvider, signOut as FirebaseSignOut, signInWithEmailAndPassword } from "firebase/auth";
+import { Auth, User, signInWithPopup, GoogleAuthProvider, signOut as FirebaseSignOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import backend from "@server/index";
 
 class AuthController {
@@ -9,9 +9,27 @@ class AuthController {
         this.auth = auth
     }
 
-    getCurrentUser() {
-        console.log(`Current user: ${this.auth.currentUser}`)
-        return this.auth.currentUser
+    signUpWithEmailAndPassword = async (email: string, password: string, confirmPassword: string) => {
+        if (password !== confirmPassword) {
+            return {
+                status: ResponseStatusEnum.ERROR,
+                body: "Passwords do not match"
+            } as ResponseI<string>
+        }
+        try {
+            const result = await createUserWithEmailAndPassword(this.auth, email, password);
+            return {
+                status: ResponseStatusEnum.SUCCESS,
+                body: result.user
+            } as ResponseI<User>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (err: any) {
+            const errorMessage = err.message as string;
+            return {
+                status: ResponseStatusEnum.ERROR,
+                body: errorMessage
+            } as ResponseI<string>
+        }
     }
 
     signInWithEmailAndPassword = async (email: string, password: string) => {
@@ -57,7 +75,6 @@ class AuthController {
 
     signOut = async () => {
         try {
-          console.log("Sign off")
           await FirebaseSignOut(this.auth);
           return {
             status: ResponseStatusEnum.SUCCESS,

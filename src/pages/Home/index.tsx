@@ -13,6 +13,7 @@ const HomePage = () => {
             navigate('/login')
         }
     }
+
     return (
         <div>
             <h1>Home Page</h1>
