@@ -17,3 +17,4 @@ This starter template is inspired by the [react-firebase-template](https://githu
 ### TODO
 1. Set up CRUD operations with TodoModel (FE and BE)
 2. Handle error responses from services and controllers
+3. Theme customization

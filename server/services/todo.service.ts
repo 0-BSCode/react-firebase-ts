@@ -1,5 +1,15 @@
 import { TodoModelSchema, TodoModelName } from "@server/models/todo.model";
-import { Firestore, addDoc, collection, deleteDoc, doc, getDocs, getFirestore, updateDoc } from "firebase/firestore";
+import {
+  Firestore,
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  updateDoc
+} from "firebase/firestore";
 
 class TodoService {
   private firestore: Firestore;
@@ -14,7 +24,8 @@ class TodoService {
   };
 
   public getItem = async (id: string) => {
-    const item = doc(this.firestore, TodoModelName, id);
+    const itemRef = doc(this.firestore, TodoModelName, id);
+    const item = await getDoc(itemRef);
     return item;
   };
 

@@ -1,5 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TodoModelSchema, TodoModelName } from "@server/models/todo.model";
+import todoService from "@server/services/todo.service";
+import { ResponseI } from "@server/types/ResponseI";
+import { ResponseStatusEnum } from "@server/types/enums/ResponseStatusEnum";
+// TODO: Define elsewhere (confusing that we're defining it in src then calling it here)
+import { Todo } from "@src/types/Todo";
 import { collection, addDoc, Firestore, getFirestore } from "firebase/firestore";
+import { z } from "zod";
 
 // Input validation, sanitization, and role validation
 class TodoController {
@@ -7,9 +14,113 @@ class TodoController {
   constructor() {
     this.firestore = getFirestore();
   }
-  public addItem = async (item: TodoModelSchema) => {
-    const itemRef = await addDoc(collection(this.firestore, TodoModelName), item);
-    return itemRef;
+
+  // TODO: Ensure current user can access only their stuff
+  public getByUserId = async (userId: string) => {
+    try {
+      const items = await todoService.getItems();
+      const filteredItems = items.docs.filter((item) => item.data().ownerId === userId);
+      const todoItems = filteredItems.map((item) => {
+        return {
+          id: item.id,
+          ...item.data()
+        } as Todo;
+      });
+
+      return {
+        status: ResponseStatusEnum.SUCCESS,
+        body: todoItems
+      } as ResponseI<Todo[]>;
+    } catch (err: any) {
+      return {
+        status: ResponseStatusEnum.ERROR,
+        body: err
+      } as ResponseI<string>;
+    }
+  };
+
+  public create = async (title: string, description: string, userId: string) => {
+    try {
+      const todoSchema = z.object({
+        title: z.string().max(20),
+        description: z.string(),
+        userId: z.string()
+      });
+
+      todoSchema.parse({ title, description, userId });
+      const newTodo: TodoModelSchema = {
+        title,
+        description,
+        ownerId: userId,
+        completed: false
+      };
+      const itemRef = await addDoc(collection(this.firestore, TodoModelName), newTodo);
+      const item = await todoService.getItem(itemRef.id);
+
+      return {
+        status: ResponseStatusEnum.SUCCESS,
+        body: {
+          id: itemRef.id,
+          ...item.data()
+        }
+      } as ResponseI<Todo>;
+      // TODO: Deal with errors
+    } catch (err: any) {
+      return {
+        status: ResponseStatusEnum.ERROR,
+        body: err
+      } as ResponseI<string>;
+    }
+  };
+
+  public updateOneStatus = async (id: string, newStatus: boolean, userId: string) => {
+    try {
+      const item = await todoService.getItem(id);
+      const itemData = item.data();
+
+      if (!itemData) {
+        throw new Error("Document not found");
+      } else if (itemData.ownerId !== userId) {
+        throw new Error("Not authorized to update this item");
+      }
+
+      const updatedItem: TodoModelSchema = {
+        completed: newStatus,
+        description: itemData.description,
+        title: itemData.title,
+        ownerId: itemData.ownerId
+      };
+
+      await todoService.updateItem(id, updatedItem);
+      return {
+        status: ResponseStatusEnum.SUCCESS,
+        body: id
+      } as ResponseI<string>;
+    } catch (err: any) {
+      return {
+        status: ResponseStatusEnum.ERROR,
+        body: err
+      } as ResponseI<string>;
+    }
+  };
+
+  public deleteOne = async (id: string, userId: string) => {
+    try {
+      const item = await todoService.getItem(id);
+      if (item.data()?.ownerId !== userId) {
+        throw new Error("Not authorized to delete this item");
+      }
+      await todoService.deleteItem(id);
+      return {
+        status: ResponseStatusEnum.SUCCESS,
+        body: id
+      } as ResponseI<string>;
+    } catch (err: any) {
+      return {
+        status: ResponseStatusEnum.ERROR,
+        body: err
+      } as ResponseI<string>;
+    }
   };
 }
 
