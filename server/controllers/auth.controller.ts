@@ -62,7 +62,6 @@ class AuthController {
             } as ResponseI<User>
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (err: any) {
-            console.log(err)
             // Handle errors here.
             const errorMessage = err.message as string;
 

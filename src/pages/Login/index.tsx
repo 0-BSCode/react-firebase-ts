@@ -29,7 +29,6 @@ const LoginPage = () => {
             authStore.setUser(user)
             navigate('/')
         } else {
-            console.log(res.body)
             alert(res.body)
         }
     }
