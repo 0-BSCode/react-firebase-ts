@@ -125,6 +125,27 @@ class AuthController {
     }
   };
 
+  public updateUserRoles = async (userId: string, userRoles: UserRolesEnum[]) => {
+    try {
+      const user = await userService.getItem(userId);
+      if (user.data()) {
+        const updatedUser = { ...user.data(), roles: userRoles } as UserModelSchema;
+        await userService.updateItem(userId, updatedUser);
+      }
+
+      return {
+        status: ResponseStatusEnum.SUCCESS,
+        body: "User roles updated successfully"
+      } as ResponseI<string>;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      return {
+        status: ResponseStatusEnum.ERROR,
+        body: err
+      } as ResponseI<string>;
+    }
+  };
+
   public isAuthorized = (userRoles: UserRolesEnum[], authorizedRoles: UserRolesEnum[]) => {
     return userRoles.every((role) => authorizedRoles.includes(role));
   };
