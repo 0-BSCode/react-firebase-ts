@@ -48,6 +48,9 @@ const LoginPage = () => {
         <button onClick={handleLoginWithCredentials}>Login</button>
       </div>
       <button onClick={handleLoginWithGoogle}>Login with Google</button>
+      <div>
+        No account yet? <a href="/register">Register</a>
+      </div>
     </div>
   );
 };

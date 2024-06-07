@@ -13,12 +13,15 @@ import backend from "@server/index";
 import { UserRolesEnum } from "@server/types/enums/UserRolesEnum";
 import { UserModelSchema } from "@server/models/user.model";
 import { Timestamp } from "firebase/firestore";
-import userService from "@server/services/user.service";
+import DbService from "@server/services/db.service";
+import { ModelNameEnum } from "@server/models";
 
 class AuthController {
   private auth: Auth;
+  private dbService: DbService<UserModelSchema>;
   constructor(auth: Auth) {
     this.auth = auth;
+    this.dbService = new DbService<UserModelSchema>(ModelNameEnum.USER);
   }
 
   signUpWithEmailAndPassword = async (email: string, password: string, confirmPassword: string) => {
@@ -35,11 +38,13 @@ class AuthController {
         uid: result.user.uid,
         email: result.user.email as string,
         roles: [UserRolesEnum.USER],
+        name: result.user.displayName as string,
+        points: 0,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now()
       };
 
-      await userService.addItem(userInfo);
+      await this.dbService.addItem(userInfo);
       return {
         status: ResponseStatusEnum.SUCCESS,
         body: result.user
@@ -79,16 +84,18 @@ class AuthController {
 
       const userInfo: UserModelSchema = {
         uid: result.user.uid,
+        name: result.user.displayName as string,
         email: result.user.email as string,
+        points: 0,
         roles: [UserRolesEnum.USER],
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now()
       };
 
-      const user = await userService.getItem(userInfo.uid);
+      const user = await this.dbService.getItem(userInfo.uid);
 
       if (!user.data()) {
-        await userService.addItem(userInfo);
+        await this.dbService.addItem(userInfo);
       }
 
       return {
@@ -127,10 +134,10 @@ class AuthController {
 
   public updateUserRoles = async (userId: string, userRoles: UserRolesEnum[]) => {
     try {
-      const user = await userService.getItem(userId);
+      const user = await this.dbService.getItem(userId);
       if (user.data()) {
         const updatedUser = { ...user.data(), roles: userRoles } as UserModelSchema;
-        await userService.updateItem(userId, updatedUser);
+        await this.dbService.updateItem(userId, updatedUser);
       }
 
       return {

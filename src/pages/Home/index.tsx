@@ -18,6 +18,8 @@ const HomePage = () => {
   const todoStore = useTodoStore();
   const user = authStore.user as User;
 
+  console.log(user);
+
   const [todo, setTodo] = useState({
     title: "",
     description: ""
