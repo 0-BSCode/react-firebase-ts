@@ -3,7 +3,7 @@ import { EventModelSchema } from "@server/models/event.model";
 import DbService from "@server/services/db.service";
 import { ResponseI } from "@server/types/ResponseI";
 import { ResponseStatusEnum } from "@server/types/enums/ResponseStatusEnum";
-import { EventSchemaInferred, SchemaInferred } from "@src/types/SchemaInferred";
+import { EventSchemaInferred } from "@src/types/SchemaInferred";
 import { Timestamp } from "firebase/firestore";
 import { z } from "zod";
 
@@ -31,7 +31,7 @@ class EventController {
       return {
         status: ResponseStatusEnum.SUCCESS,
         body: orgItems.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      } as ResponseI<SchemaInferred<EventModelSchema>[]>;
+      } as ResponseI<EventSchemaInferred[]>;
     } catch (err: unknown) {
       return {
         status: ResponseStatusEnum.ERROR,
@@ -57,7 +57,7 @@ class EventController {
       return {
         status: ResponseStatusEnum.SUCCESS,
         body: orgItems.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      } as ResponseI<SchemaInferred<EventModelSchema>[]>;
+      } as ResponseI<EventSchemaInferred[]>;
     } catch (err: unknown) {
       return {
         status: ResponseStatusEnum.ERROR,
@@ -148,7 +148,7 @@ class EventController {
     }
   };
 
-  public update = async (id: string, userId: string, updatedInfo: SchemaInferred<EventModelSchema>) => {
+  public update = async (id: string, userId: string, updatedInfo: EventSchemaInferred) => {
     try {
       const item = await this.dbService.getItem(id);
       const itemData = item.data() as EventModelSchema;
@@ -161,6 +161,7 @@ class EventController {
 
       const updatedItem: EventModelSchema = {
         ...updatedInfo,
+        occurringDate: Timestamp.fromDate(updatedInfo.occurringDate),
         updatedAt: Timestamp.now(),
         createdAt: itemData.createdAt
       };

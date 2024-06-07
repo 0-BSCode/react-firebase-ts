@@ -1,3 +1,5 @@
+import { EventModelSchema } from "@server/models/event.model";
+
 export type SchemaInferred<T> = T & {
   id: string;
   createdAt: Date;
@@ -5,5 +7,5 @@ export type SchemaInferred<T> = T & {
 };
 
 export type EventSchemaInferred = SchemaInferred<EventModelSchema> & {
-  occuringDate: Date;
+  occurringDate: Date;
 };
