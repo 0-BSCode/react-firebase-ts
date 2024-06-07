@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/Home";
 import ProtectedRoute from "./components/molecules/ProtectedRoute";
 import LoginPage from "./pages/Login";
-import SignupPage from "./pages/Signup";
+import RegisterPage from "./pages/Register";
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
           }
         />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<SignupPage />} />
+        <Route path="/register" element={<RegisterPage />} />
       </Routes>
     </Router>
   );

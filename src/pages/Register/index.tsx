@@ -5,7 +5,7 @@ import { User } from "firebase/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const SignupPage = () => {
+const RegisterPage = () => {
   const authStore = useAuthStore();
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState({
@@ -51,4 +51,4 @@ const SignupPage = () => {
   );
 };
 
-export default SignupPage;
+export default RegisterPage;
