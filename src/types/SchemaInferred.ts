@@ -3,3 +3,7 @@ export type SchemaInferred<T> = T & {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type EventSchemaInferred = SchemaInferred<EventModelSchema> & {
+  occuringDate: Date;
+};
