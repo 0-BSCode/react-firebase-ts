@@ -4,9 +4,24 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
-import { AccountBoxRounded, DashboardCustomizeRounded } from "@mui/icons-material";
+import { useNavigate, Link } from "react-router-dom";
+import { AccountBoxRounded, DashboardCustomizeRounded, StoreRounded } from "@mui/icons-material";
 
 const Side = () => {
+  const navigate = useNavigate();
+
+  const handleMarketplaceClick = () => {
+    navigate("/marketplace");
+  };
+
+  const handleDashboard = () => {
+    navigate("/");
+  };
+
+  const handleAcc = () => {
+    navigate("/Account");
+  };
+
   return (
     <Box
       width={300}
@@ -32,20 +47,24 @@ const Side = () => {
           </Typography>
         </Box>
 
-        <ListItem>
-          <AccountBoxRounded></AccountBoxRounded>
+        <ListItem button onClick={handleAcc}>
+          <AccountBoxRounded />
           <ListItemText primary="Account" />
         </ListItem>
-        <ListItem>
+        <ListItem button onClick={handleDashboard}>
           <DashboardCustomizeRounded />
           <ListItemText primary="Dashboard" />
         </ListItem>
+        <ListItem button onClick={handleMarketplaceClick}>
+          <StoreRounded />
+          <ListItemText primary="Marketplace" />
+        </ListItem>
         <Divider variant="middle" component="li" />
         <Divider variant="middle" component="li" />
-        <Typography variant="h6" sx={{ padding: "3%" }}>
+        <Typography variant="h6" sx={{ padding: "5%" }}>
           Organizations
         </Typography>
-        <ListItem>
+        <ListItem button component={Link} to="/org/1">
           <ListItemText primary="Org 1" />
         </ListItem>
         <Divider variant="middle" component="li" />
