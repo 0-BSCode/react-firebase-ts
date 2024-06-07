@@ -6,7 +6,7 @@ import * as OrganizationModel from "./organization.model";
 import * as ProductModel from "./product.model";
 import * as TodoModel from "./todo.model";
 
-// TODO: Revisit
+// TODO: Revisit (no need to have unique name since import is already unique)
 export type ModelSchemaType =
   | UserModel.UserModelSchema
   | EventModel.EventModelSchema

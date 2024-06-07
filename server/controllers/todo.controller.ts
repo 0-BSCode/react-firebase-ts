@@ -1,18 +1,16 @@
 import { ModelNameEnum } from "@server/models";
-import { TodoModelSchema, TodoModelName } from "@server/models/todo.model";
+import { TodoModelSchema } from "@server/models/todo.model";
 import DbService from "@server/services/db.service";
 import { ResponseI } from "@server/types/ResponseI";
 import { ResponseStatusEnum } from "@server/types/enums/ResponseStatusEnum";
 import { Todo } from "@src/types/Todo";
-import { collection, addDoc, Firestore, getFirestore, Timestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import { z } from "zod";
 
 // Input validation, sanitization, and role validation
 class TodoController {
-  private firestore: Firestore;
   private dbService: DbService<TodoModelSchema>;
   constructor() {
-    this.firestore = getFirestore();
     this.dbService = new DbService<TodoModelSchema>(ModelNameEnum.TODO);
   }
 
@@ -59,7 +57,7 @@ class TodoController {
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now()
       };
-      const itemRef = await addDoc(collection(this.firestore, TodoModelName), newTodo);
+      const itemRef = await this.dbService.addItem(newTodo);
       const item = await this.dbService.getItem(itemRef.id);
       const itemData = item.data() as TodoModelSchema;
       if (!itemData) {

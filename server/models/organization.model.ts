@@ -6,6 +6,7 @@ export type OrganizationModelSchema = {
   description: string;
   email: string;
   tokens: number;
+  memberNumber: number;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 };
