@@ -5,6 +5,7 @@ import * as OrderItemModel from "./orderItem.model";
 import * as OrganizationModel from "./organization.model";
 import * as ProductModel from "./product.model";
 import * as TodoModel from "./todo.model";
+import * as OrganizationMemberModel from "./organizationMember.model";
 
 // TODO: Revisit (no need to have unique name since import is already unique)
 export type ModelSchemaType =
@@ -14,7 +15,8 @@ export type ModelSchemaType =
   | OrderItemModel.OrderItemModelSchema
   | OrganizationModel.OrganizationModelSchema
   | ProductModel.ProductModelSchema
-  | TodoModel.TodoModelSchema;
+  | TodoModel.TodoModelSchema
+  | OrganizationMemberModel.OrganizationMembeModelSchema;
 
 export enum ModelNameEnum {
   USER = UserModel.UserModelName,
@@ -23,5 +25,6 @@ export enum ModelNameEnum {
   ORDER_ITEM = OrderItemModel.OrderItemModelName,
   ORGANIZATION = OrganizationModel.OrganizationModelName,
   PRODUCT = ProductModel.ProductModelName,
-  TODO = TodoModel.TodoModelName
+  TODO = TodoModel.TodoModelName,
+  ORGANIZATION_MEMBER = OrganizationMemberModel.OrganizationMemberModelName
 }
