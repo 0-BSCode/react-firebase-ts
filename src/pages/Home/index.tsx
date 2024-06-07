@@ -1,13 +1,16 @@
 import authController from "@server/controllers/auth.controller";
 import todoController from "@server/controllers/todo.controller";
 import { ResponseStatusEnum } from "@server/types/enums/ResponseStatusEnum";
-import TodoItem from "@src/components/molecules/TodoItem";
 import useAuthStore from "@src/stores/auth.store";
 import useTodoStore from "@src/stores/todo.store";
 import { Todo } from "@src/types/Todo";
 import { User } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Side from "@src/components/SideBar";
+import SearchBar from "@src/components/SearchBar";
+import EventCard from "@src/components/EventCard";
+import { Box } from "@mui/material";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -49,7 +52,17 @@ const HomePage = () => {
   }, [authStore.user]);
 
   return (
-    <div>
+    <div style={{ display: "flex", height: "100vh" }}>
+      <Side style={{ flex: "0 0 200px" }} />
+      <div style={{ flex: 1, padding: "20px" }}>
+        <SearchBar />
+
+        <Box padding={4}>
+          <EventCard EventName="Event 1" desc="Description" loc="Cebu City" points="100 Points" />
+        </Box>
+
+        {/* <div style={{ flex: 1, padding: "20px", }}>
+      <SlideshowTwoTone />
       <h1>Home Page</h1>
       <button onClick={handleSignout}>Sign Out</button>
 
@@ -75,6 +88,8 @@ const HomePage = () => {
         {todoStore.todoItems.map((item) => {
           return <TodoItem key={item.id} todo={item} />;
         })}
+      </div>
+      </div> */}
       </div>
     </div>
   );
