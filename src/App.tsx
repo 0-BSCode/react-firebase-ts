@@ -6,7 +6,9 @@ import SignupPage from "./pages/Signup";
 import Side from "./components/SideBar";
 import EventCard from "./components/EventCard";
 import SearchBar from "./components/SearchBar";
-import OrgPage from "./components/ViewOrg";
+import OrgPage1 from "./pages/OrgPages/OrgPage1";
+import Marketplace from "./pages/MarketPlace";
+import Account from "./pages/Account";
 
 function App() {
   return (
@@ -25,7 +27,9 @@ function App() {
         <Route path="/Side" element={<Side />} />
         <Route path="/EventCard" element={<EventCard />} />
         <Route path="/SearchBar" element={<SearchBar />} />
-        <Route path="/OrgPage" element={<OrgPage />} />
+        <Route path="/OrgPage1" element={<OrgPage1 />} />
+        <Route path="/Marketplace" element={<Marketplace />} />
+        <Route path="/Account" element={<Account />} />
       </Routes>
     </Router>
   );
