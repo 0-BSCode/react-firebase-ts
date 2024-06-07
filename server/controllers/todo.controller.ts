@@ -1,5 +1,6 @@
+import { ModelNameEnum } from "@server/models";
 import { TodoModelSchema, TodoModelName } from "@server/models/todo.model";
-import todoService from "@server/services/todo.service";
+import DbService from "@server/services/db.service";
 import { ResponseI } from "@server/types/ResponseI";
 import { ResponseStatusEnum } from "@server/types/enums/ResponseStatusEnum";
 import { Todo } from "@src/types/Todo";
@@ -9,13 +10,15 @@ import { z } from "zod";
 // Input validation, sanitization, and role validation
 class TodoController {
   private firestore: Firestore;
+  private dbService: DbService<TodoModelSchema>;
   constructor() {
     this.firestore = getFirestore();
+    this.dbService = new DbService<TodoModelSchema>(ModelNameEnum.TODO);
   }
 
   public getByUserId = async (userId: string) => {
     try {
-      const items = await todoService.getItems();
+      const items = await this.dbService.getItems();
       const filteredItems = items.docs.filter((item) => item.data().ownerId === userId);
       const todoItems = filteredItems.map((item) => {
         const itemData = item.data() as TodoModelSchema;
@@ -57,7 +60,7 @@ class TodoController {
         updatedAt: Timestamp.now()
       };
       const itemRef = await addDoc(collection(this.firestore, TodoModelName), newTodo);
-      const item = await todoService.getItem(itemRef.id);
+      const item = await this.dbService.getItem(itemRef.id);
       const itemData = item.data() as TodoModelSchema;
       if (!itemData) {
         throw new Error("Error creating todo item");
@@ -82,7 +85,7 @@ class TodoController {
 
   public updateOneStatus = async (id: string, newStatus: boolean, userId: string) => {
     try {
-      const item = await todoService.getItem(id);
+      const item = await this.dbService.getItem(id);
       const itemData = item.data();
 
       if (!itemData) {
@@ -100,7 +103,7 @@ class TodoController {
         createdAt: itemData.createdAt
       };
 
-      await todoService.updateItem(id, updatedItem);
+      await this.dbService.updateItem(id, updatedItem);
       return {
         status: ResponseStatusEnum.SUCCESS,
         body: id
@@ -115,11 +118,11 @@ class TodoController {
 
   public deleteOne = async (id: string, userId: string) => {
     try {
-      const item = await todoService.getItem(id);
+      const item = await this.dbService.getItem(id);
       if (item.data()?.ownerId !== userId) {
         throw new Error("Not authorized to delete this item");
       }
-      await todoService.deleteItem(id);
+      await this.dbService.deleteItem(id);
       return {
         status: ResponseStatusEnum.SUCCESS,
         body: id
